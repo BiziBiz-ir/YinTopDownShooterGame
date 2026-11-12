@@ -1,0 +1,276 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://scripts/hud.gd" id="3_hud"]
+[ext_resource type="Shader" path="res://shaders/crt_off.gdshader" id="4_shader"]
+[ext_resource type="Script" path="res://scripts/crt_effect.gd" id="5_crt"]
+[ext_resource type="Script" path="res://scripts/loadout_menu.gd" id="6_loadout"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_crt"]
+shader = ExtResource("4_shader")
+shader_parameter/progress = 0.0
+shader_parameter/resolution = Vector2(1280, 720)
+shader_parameter/beam_color = Color(0.65, 0.88, 1, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_h"]
+size = Vector2(1400, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_v"]
+size = Vector2(40, 800)
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="North" type="StaticBody2D" parent="Walls"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/North"]
+position = Vector2(640, -20)
+shape = SubResource("RectangleShape2D_wall_h")
+
+[node name="South" type="StaticBody2D" parent="Walls"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/South"]
+position = Vector2(640, 740)
+shape = SubResource("RectangleShape2D_wall_h")
+
+[node name="West" type="StaticBody2D" parent="Walls"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/West"]
+position = Vector2(-20, 360)
+shape = SubResource("RectangleShape2D_wall_v")
+
+[node name="East" type="StaticBody2D" parent="Walls"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/East"]
+position = Vector2(1300, 360)
+shape = SubResource("RectangleShape2D_wall_v")
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Bullets" type="Node2D" parent="."]
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(640, 360)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource("3_hud")
+
+[node name="Root" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ScoreLabel" type="Label" parent="HUD/Root"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 18.0
+offset_right = 300.0
+offset_bottom = 54.0
+theme_override_colors/font_color = Color(0.75, 0.85, 0.92, 1)
+theme_override_font_sizes/font_size = 22
+text = "SCORE  0"
+
+[node name="HealthLabel" type="Label" parent="HUD/Root"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 48.0
+offset_right = 300.0
+offset_bottom = 84.0
+theme_override_colors/font_color = Color(0.75, 0.85, 0.92, 1)
+theme_override_font_sizes/font_size = 20
+text = "HP  5 / 5"
+
+[node name="WeaponLabel" type="Label" parent="HUD/Root"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 76.0
+offset_right = 300.0
+offset_bottom = 108.0
+theme_override_colors/font_color = Color(0.55, 0.9, 1, 0.85)
+theme_override_font_sizes/font_size = 18
+text = "HANDGUN"
+
+[node name="WaveLabel" type="Label" parent="HUD/Root"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -300.0
+offset_top = 18.0
+offset_right = -24.0
+offset_bottom = 54.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0.75, 0.85, 0.92, 1)
+theme_override_font_sizes/font_size = 22
+text = "WAVE  1"
+horizontal_alignment = 2
+
+[node name="Banner" type="Label" parent="HUD/Root"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -160.0
+offset_right = 320.0
+offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(320, 40)
+theme_override_colors/font_color = Color(0.55, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 56
+text = "WAVE 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GameOver" type="Control" parent="HUD/Root"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Backdrop" type="ColorRect" parent="HUD/Root/GameOver"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Center" type="VBoxContainer" parent="HUD/Root/GameOver"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -120.0
+offset_right = 320.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="Title" type="Label" parent="HUD/Root/GameOver/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.42, 0.45, 1)
+theme_override_font_sizes/font_size = 64
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="FinalLabel" type="Label" parent="HUD/Root/GameOver/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.9, 0.95, 1)
+theme_override_font_sizes/font_size = 20
+text = "you died on wave 1\nscore 0"
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="HUD/Root/GameOver/Center"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="PlayAgain" type="Button" parent="HUD/Root/GameOver/Center/Buttons"]
+custom_minimum_size = Vector2(210, 54)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "PLAY AGAIN"
+
+[node name="Quit" type="Button" parent="HUD/Root/GameOver/Center/Buttons"]
+custom_minimum_size = Vector2(140, 54)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "QUIT"
+
+[node name="CRT" type="CanvasLayer" parent="."]
+layer = 100
+script = ExtResource("5_crt")
+
+[node name="Rect" type="ColorRect" parent="CRT"]
+material = SubResource("ShaderMaterial_crt")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Loadout" type="CanvasLayer" parent="."]
+layer = 60
+script = ExtResource("6_loadout")
+
+[node name="Root" type="Control" parent="Loadout"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="Loadout/Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.025, 0.04, 0.93)
+
+[node name="Panel" type="VBoxContainer" parent="Loadout/Root"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -570.0
+offset_top = -160.0
+offset_right = 570.0
+offset_bottom = 160.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="Title" type="Label" parent="Loadout/Root/Panel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 44
+text = "CHOOSE YOUR WEAPON"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="Loadout/Root/Panel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.68, 0.75, 1)
+theme_override_font_sizes/font_size = 16
+text = "click a card, or press 1-5 — enter starts"
+horizontal_alignment = 1
+
+[node name="Cards" type="HBoxContainer" parent="Loadout/Root/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1

@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/bomber.gd" id="1_bomber"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bomber"]
+radius = 15.0
+
+[node name="Bomber" type="CharacterBody2D" groups=["enemies"]]
+z_index = 1
+collision_layer = 2
+collision_mask = 4
+motion_mode = 1
+script = ExtResource("1_bomber")
+
+[node name="Shape" type="Polygon2D" parent="."]
+color = Color(1, 0.64, 0.22, 1)
+polygon = PackedVector2Array(16, 0, 8, 13.86, -8, 13.86, -16, 0, -8, -13.86, 8, -13.86)
+
+[node name="Core" type="Polygon2D" parent="."]
+color = Color(1, 0.95, 0.72, 1)
+polygon = PackedVector2Array(7, 0, -3, 5, -3, -5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_bomber")
